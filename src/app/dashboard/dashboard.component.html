@@ -1,0 +1,93 @@
+<div class="container" style="margin-top: 50px;">
+  <div class="row">
+    <div class="col-sm-6">
+      <h1>List Of Users!!!</h1>
+    </div>
+    <div class="col-sm-6 rightside">
+      <button class="btn btn-outline-info">
+        <a [routerLink]="['/register']">Click For Register</a>
+      </button>      
+    </div>
+    <div class="table">
+      <table class="table table-sm">
+        <thead>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Mobile No</th>
+          <th>Action</th>
+        </thead>
+        <ng-container *ngFor="let user of userArray">
+          <tr class="table-dark">
+            <td>{{ user.firstName }} {{ user.lastName }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.mobileNo }}</td>
+            <td>
+              <button class="btn btn-outline-info" (click)="open(content, user)">
+                <!-- (click)="userService.populateForm(user)"  -->
+                Edit
+              </button>
+              <button class="btn btn-outline-danger" (click)="onDelete(user.$key)">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-danger" *ngIf="deleteMsg">Deleted Successfully!!!</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Edit Details</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="this.userService.form" (ngSubmit)="onUpdate()">
+      <input type="hidden" formControlName="$key">
+      <div class="form-group">
+          <label>First Name</label>
+          <input formControlName="firstName" class="form-control" [ngClass]="{'is-invalid':formControls.firstName.errors}">
+          <div class="invalid-feedback" *ngIf="formControls.firstName.errors">
+              This Field Is Required
+          </div>
+      </div>
+      <div class="form-group">
+          <label>Last Name</label>
+          <input formControlName="lastName" class="form-control" [ngClass]="{'is-invalid':formControls.lastName.errors}">
+          <div class="invalid-feedback" *ngIf="formControls.lastName.errors">
+              This Field Is Required
+          </div>
+      </div>
+      <div class="form-group">
+          <label>Email-Id</label>
+          <input formControlName="email" class="form-control" [ngClass]="{'is-invalid':formControls.email.errors}">
+          <div class="invalid-feedback" *ngIf="formControls.email.errors">
+              Invalid Email Address
+          </div>
+      </div>
+      <div class="form-group">
+          <label>Mobile Number</label>
+          <input formControlName="mobileNo" class="form-control" [ngClass]="{'is-invalid':formControls.mobileNo.errors}">
+          <div class="invalid-feedback" *ngIf="formControls.mobileNo.errors">
+              <label *ngIf="formControls.mobileNo.errors.required">This Field Is Required</label>
+              <label *ngIf="formControls.mobileNo.errors.minlength">Atleast 10 numbers</label>
+          </div>
+      </div>
+      <div class="form-group">
+        <input type="submit" class="btn btn-primary" value="submit" (click)="modal.close('Save click')">
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<div class="alert alert-success" *ngIf="updateMsg">
+  Updated Successfully
+</div>
+<div class="alert alert-danger" *ngIf="notUpdated">
+  Error!!! Not Updated
+</div>
